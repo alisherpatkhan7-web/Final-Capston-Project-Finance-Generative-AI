@@ -6,9 +6,13 @@ import google.generativeai as genai
 import pandas as pd
 
 # --- 1. CONFIGURATION ---
-API_KEY = "AIzaSyC2fnZFPq59Ly3AAyRCwZbZeCY74Lq6hgk" 
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# Use Streamlit secrets for API keys (do NOT hardcode keys in source)
+API_KEY = st.secrets.get("GOOGLE_API_KEY") if hasattr(st, "secrets") else None
+if API_KEY:
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+else:
+    model = None
 
 st.set_page_config(page_title="AI Stock Pro Analyst", layout="wide", page_icon="🚀")
 
@@ -136,8 +140,11 @@ if run_btn:
                             # AI call
                             try:
                                 prompt = f"Quick 1-line impact of this stock news: {title}"
-                                res = model.generate_content(prompt)
-                                st.markdown(f"<p style='color:#00ffcc;'>✨ {res.text}</p>", unsafe_allow_html=True)
+                                if model is not None:
+                                    res = model.generate_content(prompt)
+                                    st.markdown(f"<p style='color:#00ffcc;'>✨ {res.text}</p>", unsafe_allow_html=True)
+                                else:
+                                    st.info("AI not configured — set `GOOGLE_API_KEY` in Streamlit secrets to enable AI insights.")
                             except:
                                 st.warning("AI is busy.")
                     else:

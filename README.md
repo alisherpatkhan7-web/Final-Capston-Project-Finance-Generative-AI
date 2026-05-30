@@ -12,6 +12,10 @@ Notes:
 - `requirements.txt` must list all Python dependencies.
 - If your file name contains spaces (`app .py`), Streamlit Cloud can still run it; if issues arise, rename to `app.py` and update repository.
 
+Secrets / API keys:
+- Do NOT keep API keys in source. Use Streamlit Cloud secrets: on the app page go to "Settings → Secrets" and add `GOOGLE_API_KEY` with your key.
+- The app reads the key from `st.secrets["GOOGLE_API_KEY"]` and will disable AI insights if it's missing.
+
 Local test:
 
 ```bash
